@@ -1,41 +1,85 @@
 import React from 'react'; 
-import logo from './logo.svg';
-import './App.css';
-import Coin from './components/Coin/Coin';
-import AccountBalance from './components/AccountBalance/AccountBalance';
+import styled from 'styled-components';
+import PageHeader from './components/PageHeader';
+import CoinList from './components/CoinList';
+import AccountBalance from './components/AccountBalance';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="React logo" />
-        <h1 className="App-title">
-          Coin Exchange
-        </h1>
-      </header>
-      <AccountBalance amount={10000} />
-      <table className="coin-table">
-      <thead>  
-        <tr>        
-          <th>Name</th>
-          <th>Ticker</th>
-          <th>Price</th>
-        </tr>
-      </thead>
-      <tbody>
-        <Coin name="Bitcoin" ticker="BTC" price={61000.00} /> 
-        <Coin name="Ethereum" ticker="ETH" price={4200.00} />
-        <Coin name="T00bcoin" ticker="TOOB" price={13999.99} />
-        <Coin name="Harmony" ticker="ONE" price={4.00} />
-        <Coin name="Cardano" ticker="ADA" price={13.99} />
-        <Coin name="Ripple" ticker="XRP" price={.42} />
-        <Coin name="Solana" ticker="SOL" price={3999.99} />
-        <Coin name="Binance" ticker="BNB" price={900.00} />
-        <Coin name="Terra" ticker="LUNA" price={55.21} />
-      </tbody>
-    </table>
-    </div>
-  );
+const Div = styled.div`
+  text-align: center;
+  background-color: rgb(0, 0, 0);
+  color: #cccccc;
+`;
+
+class App extends React.Component {
+
+  constructor(props) {
+    super(props); 
+    this.state = {
+      balance: 10000,
+      coinData: [
+        {
+          name: 'Bitcoin',
+          ticker: 'BTC',
+          price: 61000
+        },
+        {
+          name: 'Ethereum',
+          ticker: 'ETH',
+          price: 4200
+        },
+        {
+          name: 'T00bCoin',
+          ticker: 'TOOB',
+          price: 13999
+        },
+        {
+          name: 'Harmony',
+          ticker: 'ONE',
+          price: 4
+        },
+        {
+          name: 'Cardano',
+          ticker: 'ADA',
+          price: 12.99
+        },
+        {
+          name: 'Ripple',
+          ticker: 'XRP',
+          price: .42
+        },
+        {
+          name: 'Solana',
+          ticker: 'SOL',
+          price: 3999.24
+        },
+        {
+          name: 'Binance',
+          ticker: 'BNB',
+          price: 1200
+        },
+        {
+          name: 'Terra',
+          ticker: 'LUNA',
+          price: 72.21
+        },
+        {
+          name: 'Bitcoin Cash',
+          ticker: 'BCH',
+          price: 1872
+        },
+      ]
+    }
+  }
+
+  render() {
+    return (
+      <Div className="App">
+        <PageHeader />   
+        <AccountBalance amount={this.state.balance} />
+        <CoinList coinData={this.state.coinData} />
+      </Div>
+    );
+  } 
 }
 
 export default App;
