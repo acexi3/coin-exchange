@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import PageHeader from './components/PageHeader';
 import CoinList from './components/CoinList';
 import AccountBalance from './components/AccountBalance';
+import axios from 'axios';
 
 const Div = styled.div`
   text-align: center;
@@ -10,73 +11,37 @@ const Div = styled.div`
   color: #cccccc;
 `;
 
+const COIN_COUNT = 10; // number of coins retrieved
+const formatPrice = price => parseFloat(Number(price).toFixed(4));
+
 class App extends React.Component {
   state = {
     balance: 10000,
     showBalance: true,
-    coinData: [
-      {
-        name: 'Bitcoin',
-        ticker: 'BTC',
-        balance: 0.5,
-        price: 61000
-      },
-      {
-        name: 'Ethereum',
-        ticker: 'ETH',
-        balance: 23.5,
-        price: 4200
-      },
-      {
-        name: 'T00bCoin',
-        ticker: 'TOOB',
-        balance: 1000,
-        price: 13999
-      },
-      {
-        name: 'Harmony',
-        ticker: 'ONE',
-        balance: 0,
-        price: 4
-      },
-      {
-        name: 'Cardano',
-        ticker: 'ADA',
-        balance: 3300,
-        price: 12.99
-      },
-      {
-        name: 'Ripple',
-        ticker: 'XRP',
-        balance: 0,
-        price: .42
-      },
-      {
-        name: 'Solana',
-        ticker: 'SOL',
-        balance: 10.5,
-        price: 3999.24
-      },
-      {
-        name: 'Binance',
-        ticker: 'BNB',
-        balance: 0,
-        price: 1200
-      },
-      {
-        name: 'Terra',
-        ticker: 'LUNA',
-        balance: 43,
-        price: 72.21
-      },
-      {
-        name: 'Bitcoin Cash',
-        ticker: 'BCH',
-        balance: 0,
-        price: 1872
-      },
-    ]
+    coinData: []
   }
+
+  componentDidMount = async () => {
+    // retrieve the coin list
+    const response = await axios.get('https://api.coinpaprika.com/v1/coins'); 
+    const coinIds = response.data.slice(0, COIN_COUNT).map(coin => coin.id);
+    const tickerURL = ('https://api.coinpaprika.com/v1/tickers');
+    const promises = coinIds.map(id => axios.get(tickerURL + id));
+    const coinData = await Promise.all(promises);
+    const coinPriceData = coinData.map(function(response) {
+      const coin = response.data;
+      return {
+        key: coin.id,
+        name: coin.name,
+        ticker: coin.symbol,
+        balance: 0,
+        price: formatPrice(coin.quotes.USD.price),
+      };
+    })
+    // retrieve coin prices 
+    this.setState({ coinData: coinPriceData });
+  }
+
   handleBalanceVisibilityChange = () => {
     this.setState( function(oldState) {
       return {
@@ -85,12 +50,19 @@ class App extends React.Component {
       }
     });
   }
-  handleRefresh = (valueChangeTicker) => {
+
+  componentDidUpdate = () => {
+    console.log('UPDATE');
+  }
+
+  handleRefresh = async (valueChangeId) => {
+    const tickerUrl = (`https://api.coinpaprika.com/v1/tickers/${valueChangeId}`);
+    const response = await axios.get(tickerUrl);
+    const newPrice = formatPrice(response.data.quotes.USD.price);
     const newCoinData = this.state.coinData.map( function( values ) {
       let newValues = { ...values };  
-      if ( valueChangeTicker === values.ticker ) { 
-        const randomPercentage = 0.995 + Math.random() * 0.01;
-        newValues.price *= randomPercentage;
+      if ( valueChangeId === values.key ) { 
+        newValues.price = newPrice;
         }
       return newValues;
     });
