@@ -12,7 +12,7 @@ const Section = styled.section`
     padding: 1.5rem 0 1.5rem 2rem;
 `;
 
-export default function AccountBalance(props) {}
+export default function AccountBalance(props) {
     
     const buttonText = props.showBalance ? 'Hide Balance' : 'Show Balance';
     let content = null;
@@ -25,7 +25,7 @@ export default function AccountBalance(props) {}
             <button onClick={props.handleBalanceVisibilityChange}> {buttonText}</button>
         </Section>
     );
-
+}
 
 AccountBalance.propTypes = {
     amount: PropTypes.number.isRequired

@@ -23,7 +23,7 @@ function App(props) {
     //retrieve the coin list
     const response = await axios.get('https://api.coinpaprika.com/v1/coins'); 
     const coinIds = response.data.slice(0, COIN_COUNT).map(coin => coin.id);
-    const tickerURL = ('https://api.coinpaprika.com/v1/tickers');
+    const tickerURL = ('https://api.coinpaprika.com/v1/tickers/');
     const promises = coinIds.map(id => axios.get(tickerURL + id));
     const coinData = await Promise.all(promises);
     const coinPriceData = coinData.map(function(response) {
@@ -40,15 +40,11 @@ function App(props) {
     setCoinData(coinPriceData);
   } 
 
-  useEffect(async function() {
+  useEffect(function() {
     if (coinData.length === 0) {
-      componentDidMount() 
+      componentDidMount(); 
     }
   });
-
-  componentDidUpdate = () => {
-    console.log('UPDATE');
-  }
 
   const handleBalanceVisibilityChange = () => {
     setShowBalance(oldValue => !oldValue);
